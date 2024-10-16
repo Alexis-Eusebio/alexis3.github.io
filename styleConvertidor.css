@@ -1,0 +1,43 @@
+
+body {
+    font-family: Arial, sans-serif;
+    
+    
+    
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    
+}
+input {
+    margin-bottom: 10px;
+    border-color: blue;
+}
+.resultado {
+    margin-top: 20px;
+}
+.tabla-contenedor {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 100%;
+  
+    
+}
+table, th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+   
+}
+th {
+    background-color: #fbc281;
+}
+tr{
+    color: rgb(0, 0, 0);
+}
+.paso {
+    margin-top: 50px;
+    
+}

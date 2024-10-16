@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor IEEE 754</title>
+    <link rel="stylesheet" href="styleConvertidor.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Convertidor de números a IEEE 754</h1>
+        <p>Ingresa un número real para convertirlo a su representación IEEE 754 (32 bits):</p>
+        <input type="number" id="numeroReal" step="any" placeholder="Introduce un número real">
+        <button onclick="convertir()">Convetir</button>
+
+        <div class="resultado" id="resultado">
+            <!-- Aquí se mostrarán los resultados -->
+        </div>
+    </div>
+
+    <script>
+        function convertir() {
+            const numeroReal = parseFloat(document.getElementById('numeroReal').value);
+           
+            const resultadoDiv = document.getElementById('resultado');
+                  resultadoDiv.innerHTML = '';
+            const signo = numeroReal < 0 ? 1 : 0;
+            const valorAbsoluto = Math.abs(numeroReal);
+            const parteEntera = Math.floor(valorAbsoluto);
+            const parteFraccionaria = valorAbsoluto - parteEntera;
+            let parteEnteraBinaria = '';
+            let temporalEntero = parteEntera;
+            let tablaParteEnteraHTML = '<table class="tabla-contenedor"><thead><tr><th>Valor</th><th>Divisor</th><th>Cociente</th><th>Residuo</th></tr></thead><tbody>';
+            while (temporalEntero > 0) {
+                const cociente = Math.floor(temporalEntero / 2);
+                const residuo = temporalEntero % 2;
+                parteEnteraBinaria = residuo + parteEnteraBinaria;
+                tablaParteEnteraHTML += `<tr><td>${temporalEntero}</td><td>2</td><td>${cociente}</td><td>${residuo}</td></tr>`;
+                temporalEntero = cociente;
+            }
+            tablaParteEnteraHTML += '</tbody></table>';
+            let parteFraccionariaBinaria = '';
+            let fraccion = parteFraccionaria;
+            
+            let tablaParteFraccionariaHTML = '<table class="tabla-contenedor"><thead><tr><th>Valor</th><th>Multiplicador</th><th>Producto</th><th>Dígito</th></tr></thead><tbody>';
+            let contador = 0;
+            while (fraccion > 0 && contador < 23) {
+                const producto = fraccion * 2;
+                const digito = Math.floor(producto);
+                parteFraccionariaBinaria += digito;
+                tablaParteFraccionariaHTML += `<tr><td>${fraccion}</td><td>2</td><td>${producto}</td><td>${digito}</td></tr>`;
+                fraccion = producto - digito;
+                contador++;
+            }
+            tablaParteFraccionariaHTML += '</tbody></table>';
+
+            const representacionBinaria = parteEnteraBinaria + '.' + parteFraccionariaBinaria;
+            const exponente = parteEnteraBinaria.length - 1;
+            const normalizado = '1.' + representacionBinaria.slice(1).replace('.', '');
+            const exponenteConBias = exponente + 127;
+            const exponenteBinario = exponenteConBias.toString(2).padStart(8, '0');
+            const mantisa = normalizado.slice(2, 25).padEnd(23, '0');
+            let tablaResumenHTML = '<table class="tabla-contenedor"><thead><tr><th>Signo</th><th>Exponente</th><th>Fracción</th></tr></thead><tbody>';
+            tablaResumenHTML += `<tr><td>${signo}</td><td>${exponenteBinario}</td><td>${mantisa}</td></tr>`;
+            tablaResumenHTML += '</tbody></table>';
+            resultadoDiv.innerHTML += `<div class="paso"><strong>Número ingresado:</strong> ${numeroReal}</div>`;
+            resultadoDiv.innerHTML += tablaParteEnteraHTML;
+            resultadoDiv.innerHTML += tablaParteFraccionariaHTML;
+            resultadoDiv.innerHTML += tablaResumenHTML;
+            resultadoDiv.innerHTML += `<div class="paso"><strong>Resultado final IEEE 754 (32 bits):</strong> ${signo} ${exponenteBinario} ${mantisa}</div>`;
+        }
+    </script>
+</body>
+</html>
